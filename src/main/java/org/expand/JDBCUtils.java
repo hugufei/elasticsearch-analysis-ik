@@ -100,6 +100,54 @@ public final class JDBCUtils {
         }
     }
 
+    public static long queryMaxSynonymRuleVersion(String dbUrl) throws Exception {
+        long maxVersion = 0;
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(dbUrl);
+            stmt = conn.createStatement();
+            String sql = "SELECT max(last_update_time) VERSION FROM es_word_def where word_type = 7";
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                maxVersion = rs.getLong("VERSION");
+            }
+        } finally {
+            closeQuietly(conn, stmt, rs);
+        }
+
+        return maxVersion;
+    }
+
+    public static List<String> querySynonymRules(String dbUrl, long lastestVersion) throws Exception {
+        List<String> list = new ArrayList<String>();
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(dbUrl);
+            stmt = conn.createStatement();
+            String sql;
+            if (lastestVersion > 0) {
+                sql = "SELECT word RULE FROM es_word_def WHERE last_update_time <= " + lastestVersion + " and status = 1 and word_type = 7";
+            } else {
+                sql = "SELECT word RULE FROM es_word_def WHERE status = 1 and word_type = 7";
+            }
+
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                list.add(rs.getString("RULE"));
+            }
+        } finally {
+            closeQuietly(conn, stmt, rs);
+        }
+
+        return list;
+
+    }
 
     private static void closeQuietly(Connection conn, Statement stmt, ResultSet rs) {
         if (rs != null) {

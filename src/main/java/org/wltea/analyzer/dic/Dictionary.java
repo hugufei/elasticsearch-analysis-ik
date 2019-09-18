@@ -153,7 +153,7 @@ public class Dictionary {
 			synchronized (Dictionary.class) {
 				if (singleton == null) {
 					singleton = new Dictionary(cfg);
-					if (initialByYohoConfiguration(cfg.getEnvironment())) {
+					if (initialByDbConfiguration(cfg.getEnvironment())) {
 						logger.info("initial dict by yoho Configuration success .....");
 					}else{
 						singleton.loadMainDict();
@@ -771,7 +771,7 @@ public class Dictionary {
 
 
 	/****************************************** add by hugufei **************************************************/
-	private static boolean initialByYohoConfiguration(Environment env) {
+	private static boolean initialByDbConfiguration(Environment env) {
 		DictConfiguration dictConfiguration = DictConfigurationResolver.getDictConfiguration(env);
 		if(dictConfiguration==null || dictConfiguration.getDbUrl()==null){
 			return false;
