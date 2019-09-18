@@ -10,4 +10,11 @@
 	<!-- <entry key="remote_ext_dict">words_location</entry> -->
 	<!--用户可以在这里配置远程扩展停止词字典-->
 	<!-- <entry key="remote_ext_stopwords">words_location</entry> -->
+	<entry key="dict_db_load_only">true</entry>
+	<entry key="dict_db_server">192.168.102.216</entry>
+	<entry key="dict_db_port">3306</entry>
+	<entry key="dict_db_database">yhb_search_2016</entry>
+	<entry key="dict_db_user">yh_test</entry>
+	<entry key="dict_db_password">9nm0icOwt6bMHjMusIfMLw==</entry>
+	<entry key="dict_db_check_interval">120</entry>
 </properties>
