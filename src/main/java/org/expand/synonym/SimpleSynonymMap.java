@@ -19,8 +19,6 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.elasticsearch.common.logging.ESLoggerFactory;
-import org.expand.synonym.SynonymConfiguration;
-import org.wltea.analyzer.dic.Monitor;
 
 import java.io.IOException;
 import java.util.*;
@@ -28,7 +26,7 @@ import java.util.*;
 
 public class SimpleSynonymMap {
 
-	private static final Logger LOGGER = ESLoggerFactory.getLogger(Monitor.class.getName());
+	private static final Logger LOGGER = ESLoggerFactory.getLogger(SimpleSynonymMap.class);
 
 	private Map<String, List<String>> sameRuleMap = new HashMap<String, List<String>>();// 完全对等的同义词map
 	private Map<String, List<String>> rewriteRuleMap = new HashMap<String, List<String>>();// 改写的同义词map
@@ -49,7 +47,7 @@ public class SimpleSynonymMap {
 
 	private void addInternal(String line) throws IOException {
 		String sides[] = split(line, "=>");
-		// 处理改写
+		// 处理改写,比如配置的是 a==> b,c,d ,那么输入的是a，得到的是 b,c,d
 		if (sides.length > 1) { // explicit mapping
 			if (sides.length != 2) {
 				throw new IllegalArgumentException("more than one explicit mapping specified on the same line");
@@ -74,6 +72,7 @@ public class SimpleSynonymMap {
 				}
 			}
 		} else {
+			//处理对等 配置a,b,c，输入a，返回 a,b,c
 			List<String> inputList = new ArrayList<>();
 			String inputStrings[] = split(line, ",");
 			for (int i = 0; i < inputStrings.length; i++) {

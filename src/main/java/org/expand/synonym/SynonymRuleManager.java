@@ -27,12 +27,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by ginozhang on 2017/1/12.
- */
 public class SynonymRuleManager {
 
-	private static final Logger LOGGER = ESLoggerFactory.getLogger(Monitor.class.getName());
+	private static final Logger LOGGER = ESLoggerFactory.getLogger(SynonymRuleManager.class);
 
 	private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, new ThreadFactory() {
 		@Override

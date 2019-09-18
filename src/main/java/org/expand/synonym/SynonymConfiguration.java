@@ -13,11 +13,13 @@
  */
 package org.expand.synonym;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.elasticsearch.common.logging.ESLoggerFactory;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.IndexSettings;
@@ -28,6 +30,8 @@ import org.wltea.analyzer.lucene.IKAnalyzer;
  * 同义词配置
  */
 public class SynonymConfiguration {
+
+	private static final Logger LOGGER = ESLoggerFactory.getLogger(SynonymConfiguration.class);
 
 	//是否区分大小写，默认为true
 	private final boolean ignoreCase;
@@ -47,6 +51,9 @@ public class SynonymConfiguration {
 		final boolean ignoreCase = settings.getAsBoolean("synonym_ignore_case", false);
 		final boolean expand = settings.getAsBoolean("synonym_expand", true);
 		final String analyzerName = settings.get("synonym_analyzer", "whitespace");
+
+		LOGGER.info("begin createSynonymConfiguration, index name is [{}],ignoreCase is[{}],expand is[{}],analyzerName is[{}]", indexSettings.getIndex().getName(),ignoreCase,expand,analyzerName);
+
 		Analyzer analyzer;
 		if ("standand".equalsIgnoreCase(analyzerName)) {
 			analyzer = new StandardAnalyzer();

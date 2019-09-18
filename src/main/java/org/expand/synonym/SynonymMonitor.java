@@ -20,7 +20,7 @@ import org.wltea.analyzer.dic.Monitor;
 
 public class SynonymMonitor implements Runnable {
 
-    private static final Logger LOGGER = ESLoggerFactory.getLogger(Monitor.class.getName());
+    private static final Logger LOGGER = ESLoggerFactory.getLogger(SynonymMonitor.class);
 
     private String dbUrl;
     private long lastUpdateVersion;
