@@ -154,7 +154,7 @@ public class Dictionary {
 				if (singleton == null) {
 					singleton = new Dictionary(cfg);
 					if (initialByDbConfiguration(cfg.getEnvironment())) {
-						logger.info("initial dict by yoho Configuration success .....");
+						logger.info("initial dict by db Configuration success .....");
 					}else{
 						singleton.loadMainDict();
 						singleton.loadSurnameDict();

@@ -13,6 +13,7 @@
  */
 package org.expand.synonym;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -22,6 +23,10 @@ import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 import java.io.IOException;
 import java.util.List;
 
+
+/**
+ * 参考ES的实现SynonymTokenFilterFactory
+ */
 public class DynamicSynonymTokenFilter extends TokenFilter {
 
     public static final String TYPE_SYNONYM = "SYNONYM";
@@ -43,10 +48,14 @@ public class DynamicSynonymTokenFilter extends TokenFilter {
     private int currentIndex = 0;
     
     private boolean isRewrite;
+    private boolean ignoreCase;
+    private Analyzer analyzer;
 
-    public DynamicSynonymTokenFilter(TokenStream input,boolean isRewrite){
+    public DynamicSynonymTokenFilter(TokenStream input,boolean isRewrite,boolean ignoreCase,Analyzer analyzer){
         super(input);
         this.isRewrite = isRewrite;
+        this.ignoreCase = ignoreCase;
+        this.analyzer = analyzer;
     }
 
     @Override
@@ -59,10 +68,9 @@ public class DynamicSynonymTokenFilter extends TokenFilter {
             currentInput = new String(termAtt.buffer(), 0, termAtt.length());
             startOffset = offset.startOffset();
             endOffset = offset.endOffset();
-            currentWords = SynonymRuleManager.getSingleton().getSynonymWords(currentInput,isRewrite);
+            currentWords = SynonymRuleManager.getSingleton().getSynonymWords(currentInput,isRewrite,ignoreCase,analyzer);
             if (currentWords == null || currentWords.isEmpty()) {
                 currentInput = null;
-
                 // 返回当前的token
                 return true;
             }
