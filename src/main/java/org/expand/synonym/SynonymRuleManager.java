@@ -19,7 +19,6 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.elasticsearch.common.logging.ESLoggerFactory;
@@ -78,11 +77,11 @@ public class SynonymRuleManager {
         return singleton;
     }
 
-    public List<String> getSynonymWords(String inputToken,boolean isRewrite,boolean ignoreCase,Analyzer analyzer) {
+    public List<String> getSynonymWords(String inputToken, boolean isRewrite, boolean ignoreCase, Analyzer analyzer) {
         if (this.synonymMap == null) {
             return null;
         }
-        List<String> synonymWords = this.synonymMap.getSynonymWords(inputToken, isRewrite,ignoreCase);
+        List<String> synonymWords = this.synonymMap.getSynonymWords(inputToken, isRewrite, ignoreCase);
         if (synonymWords == null || synonymWords.isEmpty()) {
             return null;
         }
@@ -94,9 +93,10 @@ public class SynonymRuleManager {
     }
 
     private static Set<String> analyze(String text, Analyzer analyzer) {
+        Set<String> result = new HashSet<String>();
+        TokenStream ts = null;
         try {
-            Set<String> result = new HashSet<String>();
-            TokenStream ts = analyzer.tokenStream("", text);
+            ts = analyzer.tokenStream("", text);
             CharTermAttribute termAtt = ts.addAttribute(CharTermAttribute.class);
             PositionIncrementAttribute posIncAtt = ts.addAttribute(PositionIncrementAttribute.class);
             ts.reset();
@@ -110,19 +110,26 @@ public class SynonymRuleManager {
                 }
                 result.add(new String(termAtt.buffer(), 0, termAtt.length()));
             }
-            ts.end();
-            return result;
-        }catch (Exception e){
-            LOGGER.error(e.getMessage(),e);
-            return new HashSet<>();
+        } catch (Exception e) {
+            LOGGER.error("text {} happen error:", text);
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            try {
+                ts.end();
+                ts.close();
+            } catch (Exception e2) {
+                LOGGER.error(e2.getMessage(), e2);
+            }
         }
+        return result;
     }
 
     public static void main(String[] args) {
-        System.out.println(analyze("AB+C",new WhitespaceAnalyzer()));
-        System.out.println(analyze("AB+C",new StandardAnalyzer()));
-        System.out.println(analyze("AB+C",new SimpleAnalyzer()));
-        System.out.println(analyze("AB+C",new KeywordAnalyzer()));
+        WhitespaceAnalyzer analyzer = new WhitespaceAnalyzer();
+        System.out.println(analyze("AB-C1", analyzer));
+        System.out.println(analyze("AB-C2", analyzer));
+        System.out.println(analyze("AB-C3", analyzer));
+        System.out.println(analyze("AB-C4", analyzer));
     }
 
 
@@ -163,7 +170,7 @@ public class SynonymRuleManager {
             tempSynonymMap.addRule(rule);
         }
         LOGGER.info("load synonym rule succeed, count={}, maxVersion={}", synonymRuleList.size(), maxVersion);
-        JDBCUtils.recordLog(dbUrl,String.format("load synonym succeed, ip= %s, count=%d, maxVersion=%d", HostUtils.getIp(), synonymRuleList.size(), maxVersion));
+        JDBCUtils.recordLog(dbUrl, String.format("load synonym succeed, ip= %s, count=%d, maxVersion=%d", HostUtils.getIp(), synonymRuleList.size(), maxVersion));
         return tempSynonymMap;
     }
 }
