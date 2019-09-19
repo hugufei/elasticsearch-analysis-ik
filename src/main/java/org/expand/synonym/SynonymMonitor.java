@@ -16,7 +16,6 @@ package org.expand.synonym;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.logging.ESLoggerFactory;
 import org.expand.JDBCUtils;
-import org.wltea.analyzer.dic.Monitor;
 
 public class SynonymMonitor implements Runnable {
 

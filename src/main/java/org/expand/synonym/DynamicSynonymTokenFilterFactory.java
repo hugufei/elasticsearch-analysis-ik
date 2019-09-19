@@ -26,13 +26,13 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.analysis.AbstractTokenFilterFactory;
-import org.expand.dict.DictConfigurationResolver;
 import org.wltea.analyzer.cfg.Configuration;
+import org.wltea.analyzer.dic.Monitor;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 public class DynamicSynonymTokenFilterFactory extends AbstractTokenFilterFactory {
 
-    private static final Logger logger = ESLoggerFactory.getLogger(DynamicSynonymTokenFilterFactory.class);
+    private static final Logger logger = ESLoggerFactory.getLogger(Monitor.class.getName());
 
     private boolean isRewrite;
     private boolean ignoreCase;
@@ -49,7 +49,7 @@ public class DynamicSynonymTokenFilterFactory extends AbstractTokenFilterFactory
         String analyzerName = settings.get("synonym_analyzer", "whitespace");
         this.analyzer = buildAnalyzer(analyzerName, env, settings);
 
-        logger.info("indexname is {} , isRewrite is {}, ignoreCase is {} ,expand is {},analyzer is{} ",indexSettings.getIndex().getName(),isRewrite,ignoreCase,expand,analyzer);
+        logger.info("indexname is [{}] , isRewrite is [{}], ignoreCase is [{}] ,expand is [{}],analyzerName is[{}] ",indexSettings.getIndex().getName(),isRewrite,ignoreCase,expand,analyzerName);
 
         // 初始化同义词词库
         SynonymRuleManager.initial(env);

@@ -163,8 +163,7 @@ public class SynonymRuleManager {
             tempSynonymMap.addRule(rule);
         }
         LOGGER.info("load synonym rule succeed, count={}, maxVersion={}", synonymRuleList.size(), maxVersion);
-        JDBCUtils.recordLog(dbUrl,
-                String.format("load synonym succeed, ip= %s, count=%d, maxVersion=%d", HostUtils.getIp(), synonymRuleList.size(), maxVersion));
+        JDBCUtils.recordLog(dbUrl,String.format("load synonym succeed, ip= %s, count=%d, maxVersion=%d", HostUtils.getIp(), synonymRuleList.size(), maxVersion));
         return tempSynonymMap;
     }
 }
