@@ -36,20 +36,21 @@ public class DynamicSynonymTokenFilterFactory extends AbstractTokenFilterFactory
 
     private boolean isRewrite;
     private boolean ignoreCase;
-    private Analyzer analyzer;
+    private Analyzer analyzer ;
     private boolean expand;
 
     public DynamicSynonymTokenFilterFactory(IndexSettings indexSettings, Environment env, String name, Settings settings, boolean isRewrite) {
         super(indexSettings, name, settings);
 
-        // 获取同义词过滤器的配置项
+        // 获取同义词过滤器的配置项-参数从settings里取会有BUG，直接写死
         this.isRewrite = isRewrite;
-        this.ignoreCase = settings.getAsBoolean("synonym_ignore_case", true);
-        this.expand = settings.getAsBoolean("synonym_expand", true);
-        String analyzerName = settings.get("synonym_analyzer", "whitespace");
+        //this.ignoreCase = settings.getAsBoolean("synonym_ignore_case", true);
+        this.ignoreCase = true;
+        // this.expand = settings.getAsBoolean("synonym_expand", true);
+        this.expand = true;
+        //String analyzerName = settings.get("synonym_analyzer", "ik_smart");
+        String analyzerName = "ik_smart";
         this.analyzer = buildAnalyzer(analyzerName, env, settings);
-
-        logger.info("indexname is [{}] , isRewrite is [{}], ignoreCase is [{}] ,expand is [{}],analyzerName is[{}] ",indexSettings.getIndex().getName(),isRewrite,ignoreCase,expand,analyzerName);
 
         // 初始化同义词词库
         SynonymRuleManager.initial(env);
